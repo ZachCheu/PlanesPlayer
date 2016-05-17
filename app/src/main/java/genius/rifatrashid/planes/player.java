@@ -6,11 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Matrix;
 
-/**
- * Created by rifatrashid on 5/10/16.
- */
 public class player {
-    public int rate = 5;
+    public int rate = 10;
     private float x = 0;
     private float y = 0;
     private float radius = 100;
@@ -33,6 +30,7 @@ public class player {
         matrix.reset();
         //if(VAR.rotateGoal<)
         //matrix.setTranslate(x, y);
+        //Testing
         if(VAR.rotateGoal < 0){
             VAR.rotateGoal = 360+VAR.rotateGoal;
         }
@@ -52,9 +50,15 @@ public class player {
             VAR.currentRotate +=rate;
         }
         else if(VAR.rotateGoal<VAR.currentRotate && VAR.shouldTurn){
-            VAR.currentRotate-=rate;
+            if(Math.abs(VAR.rotateGoal-VAR.currentRotate)>180)
+                VAR.currentRotate+=rate;
+            else
+                VAR.currentRotate-=rate;
         }else if(VAR.rotateGoal>VAR.currentRotate && VAR.shouldTurn){
-            VAR.currentRotate+=rate;
+            if(Math.abs(VAR.rotateGoal-VAR.currentRotate)>180)
+                VAR.currentRotate-=rate;
+            else
+                VAR.currentRotate+=rate;
         }
         if(VAR.pressX!=0) {
             matrix.postTranslate(-player.getWidth()/2, -player.getHeight() / 2);
