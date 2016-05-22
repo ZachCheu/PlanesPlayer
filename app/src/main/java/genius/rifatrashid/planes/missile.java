@@ -25,7 +25,7 @@ public class missile {
     public Point botLeft = new Point((VAR.screenWidth/2)-(playerhitlength/2),(VAR.screenHeight/2)+(playerhitlength/2));
     public Point botRight = new Point((VAR.screenWidth/2)+(playerhitlength/2),(VAR.screenHeight/2)+(playerhitlength/2));
 
-    public missile(Bitmap missleBit, int x, int y, int rate,boolean run){
+    public missile(Bitmap missleBit,int x, int y, int rate,boolean run){
         this.x= x;
         this.y= y;
         this.missileBit = missleBit;
@@ -37,17 +37,20 @@ public class missile {
         if(run) {
             timer++;
             matrix.reset();
-            this.x -= 30 * Math.cos((double) VAR.currentRotate * (Math.PI / 180));
-            this.y -= 30 * Math.sin((double) VAR.currentRotate * (Math.PI / 180));
+            if(!VAR.isDead) {
+                this.x -= 30 * Math.cos((double) VAR.currentRotate * (Math.PI / 180));
+                this.y -= 30 * Math.sin((double) VAR.currentRotate * (Math.PI / 180));
+            }
             deltax = 35 * Math.cos((double) currentRotate * (Math.PI / 180));
             deltay = 35 * Math.sin((double) currentRotate * (Math.PI / 180));
             this.x += deltax;
             this.y += deltay;
             matrix.postTranslate(-missileBit.getWidth() / 2, -missileBit.getHeight() / 2);
-            if (timer < 540) {
-                rotateGoal = (int) (Math.toDegrees(Math.atan2(-this.y + VAR.screenHeight / 2, -this.x + VAR.screenWidth / 2)));
-            } else {
+
+            if(timer >=540 || VAR.isDead){
                 rotateGoal = 0;
+            } else if (timer < 540) {
+                rotateGoal = (int) (Math.toDegrees(Math.atan2(-this.y + VAR.screenHeight / 2, -this.x + VAR.screenWidth / 2)));
             }
             if (timer > 700) {
                 timer = 0;
@@ -109,21 +112,22 @@ public class missile {
     public boolean hitDetect(player plane){
         playerhitlength = (int)(plane.getHeight()+plane.getWidth())/2;
         missilehitlength = (int)(getWidth()+getHeight())/2;
-        if(x>topLeft.x && x< topRight.x){
-            if(y>botLeft.y && y>topLeft.y){
+        System.out.println(playerhitlength);
+        //System.out.println(x);
+        //System.out.println(botLeft.y);
+        //System.out.println(topLeft.y);
+        if(x>650 && x< 790){
+            System.out.println("x hit");
+            if(y>1126 && y<1266){
                 return true;
             }
         }
-        if(x+missilehitlength>topLeft.x && x+missilehitlength< topRight.x){
+        /*if(x+missilehitlength>topLeft.x && x+missilehitlength< topRight.x){
             if(y>botLeft.y && y>topLeft.y){
+                System.out.println("hit");
                 return true;
             }
-        }
-        if(x>topLeft.x && x< topRight.x){
-            if(y>botLeft.y && y>topLeft.y){
-                return true;
-            }
-        }
+        }*/
         return false;
     }
 }

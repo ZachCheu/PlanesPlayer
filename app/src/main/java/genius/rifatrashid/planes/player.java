@@ -14,8 +14,10 @@ public class player {
     private Matrix matrix ;
     Paint paint;
     private Bitmap player;
+    private Bitmap explosion;
+    private int deathtimer;
 
-    public player(float x, float y, Bitmap player){
+    public player(float x, float y, Bitmap player,Bitmap explosion){
         this.x = x;
         this.y = y;
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -24,9 +26,13 @@ public class player {
         paint.setStyle(Paint.Style.FILL);
         this.player = player;
         matrix = new Matrix();
+        this.explosion = explosion;
     }
 
     public void Draw(Canvas canvas){
+        if(VAR.isDead){
+            this.player = explosion;
+        }
         matrix.reset();
         if(VAR.rotateGoal < 0){
             VAR.rotateGoal = 360+VAR.rotateGoal;

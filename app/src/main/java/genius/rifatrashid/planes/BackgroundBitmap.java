@@ -42,6 +42,10 @@ public class BackgroundBitmap {
         //calculate the distance between device top right X coordinate and the larger background
         deltaX = 25*Math.cos((double)VAR.currentRotate* (Math.PI/180));
         deltaY = 25*Math.sin((double) VAR.currentRotate * (Math.PI / 180));
+        if(VAR.isDead){
+            deltaX = 0;
+            deltaY = 0;
+        }
         this.x += deltaX;
         this.y += deltaY;
         /*System.out.println("Current Rotate: "+VAR.currentRotate);
@@ -60,7 +64,7 @@ public class BackgroundBitmap {
         if(this.y>=this.BigBackground.getHeight()-VAR.screenHeight){
             this.y = 2;
         }
-        System.out.println(this.x);
+        //System.out.println(this.x);
         if(this.y <=0){
             this.y=this.BigBackground.getHeight()-VAR.screenHeight;
         }
