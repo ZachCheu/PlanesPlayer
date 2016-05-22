@@ -20,6 +20,7 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private SurfaceHolder _surfaceHolder;
     private SurfaceView _surfaceView;
     private GameLoopThread thread;
+    public int timer = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +120,7 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
         private GamePhysicsThread gamePhysicsThread;
         Bitmap bgScroller;
         Bitmap backgroundDraw;
+        BackgroundBitmap backgroundBitmap;
 
         public GameLoopThread(SurfaceHolder surfaceHolder, Handler handler) {
             _surfaceHolder = surfaceHolder;
@@ -129,10 +131,17 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
         public void doStart() {
             synchronized (_surfaceHolder) {
-                VAR.player = BitmapFactory.decodeResource(getResources(),R.drawable.rocketleft);
+                VAR.startTime = System.currentTimeMillis();
+                VAR.player = BitmapFactory.decodeResource(getResources(),R.drawable.player);
                 VAR.plane = new player(VAR.screenWidth / 2, VAR.screenHeight / 2,VAR.player);
-                bgScroller = BitmapFactory.decodeResource(getResources(), R.drawable.backgroundairplanes);
-
+                VAR.missile = BitmapFactory.decodeResource(getResources(), R.drawable.missile);
+                VAR.m1 = new missile(VAR.missile,VAR.screenWidth,450,4,true);
+                VAR.m2 = new missile(VAR.missile,-200,-200,6,false);
+                VAR.m3 = new missile(VAR.missile,VAR.screenWidth,900,3,false);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inScaled = false;
+                bgScroller = BitmapFactory.decodeResource(getResources(), R.drawable.background, options);
+                backgroundBitmap = new BackgroundBitmap(bgScroller, VAR.screenWidth, VAR.screenHeight);
             }
         }
 
@@ -185,8 +194,13 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
             if (run) {
                 canvas.save();
                 canvas.drawColor(Color.parseColor("#FFFFFF"));
+                backgroundBitmap.Draw(canvas);
+                canvas.drawARGB(0, 183, 241, 255);
                 VAR.plane.Draw(canvas);
-                System.out.println("pX:"+VAR.pressX+"   pY:"+VAR.pressY);
+                VAR.m1.Draw(canvas);
+                VAR.m2.Draw(canvas);
+                VAR.m3.Draw(canvas);
+
             }
             canvas.restore();
         }
@@ -199,6 +213,25 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
             public void update() {
                 backgroundDraw = Bitmap.createBitmap(bgScroller, bgScroller.getWidth()/2 - VAR.screenWidth/2, bgScroller.getHeight()/2 - VAR.screenHeight/2, VAR.screenWidth, VAR.screenHeight);
+                timer++;
+                if(timer>=180){
+                    timer = 0;
+                    if(!VAR.m1.getRun()){
+                        VAR.m1.run();
+                        VAR.m1run = true;
+                    }else if(!VAR.m2.getRun()){
+                        VAR.m2.run();
+                        VAR.m2run = true;
+                    }else if(!VAR.m3.getRun()){
+                        VAR.m3.run();
+                        VAR.m3run = true;
+                    }
+                }
+                if(!VAR.isDead){
+                    if(VAR.m1.hitDetect(VAR.plane)){
+                        System.out.println("hit");
+                    }
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Matrix;
 
 public class player {
-    public int rate = 10;
+    public int rate = 7;
     private float x = 0;
     private float y = 0;
     private float radius = 100;
@@ -28,16 +28,13 @@ public class player {
 
     public void Draw(Canvas canvas){
         matrix.reset();
-        //if(VAR.rotateGoal<)
-        //matrix.setTranslate(x, y);
-        //Testing
         if(VAR.rotateGoal < 0){
             VAR.rotateGoal = 360+VAR.rotateGoal;
         }
         if(VAR.currentRotate < 0){
             VAR.currentRotate = 360+VAR.currentRotate;
         }
-        if(Math.abs(VAR.currentRotate-VAR.rotateGoal)<=3){
+        if(Math.abs(VAR.currentRotate-VAR.rotateGoal)<=13){
             VAR.shouldTurn = false;
         }
         else{
@@ -61,14 +58,13 @@ public class player {
                 VAR.currentRotate+=rate;
         }
         if(VAR.pressX!=0) {
-            matrix.postTranslate(-player.getWidth()/2, -player.getHeight() / 2);
+            matrix.postTranslate(-player.getWidth() / 2, -player.getHeight() / 2);
             if(VAR.currentRotate>180){
                 VAR.currentRotate=VAR.currentRotate-360;
             }
             matrix.postRotate(VAR.currentRotate);
-            matrix.postTranslate(x+player.getWidth()/2,y+player.getHeight()/2);
-            //matrix.preRotate((int) (180*(Math.atan(VAR.pressY / VAR.pressX))/Math.PI));
-            //System.out.println((int) (180*(Math.atan(VAR.pressY / VAR.pressX))/Math.PI));
+            matrix.postTranslate(x, y);
+            //matrix.postTranslate(x+player.getWidth()/2,y+player.getHeight()/2);
         }
         else{
             matrix.postTranslate(x,y);

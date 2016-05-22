@@ -7,7 +7,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    android:background="@color/white"
+    android:background="@color/colorPrimaryDark"
     tools:context=".GameActivity">
 
     <SurfaceView
