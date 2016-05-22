@@ -15,9 +15,7 @@ public class startupActivity extends Activity implements GoogleApiClient.Connect
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.viewpager_activity);
-
-
+        //setContentView(R.layout.viewpager_activity);
 
     }
 
