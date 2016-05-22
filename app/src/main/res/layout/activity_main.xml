@@ -16,6 +16,9 @@
         android:id="@+id/surfaceView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+
+
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
