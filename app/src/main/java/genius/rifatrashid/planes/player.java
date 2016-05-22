@@ -13,11 +13,15 @@ public class player {
     private float radius = 100;
     private Matrix matrix ;
     Paint paint;
+    private Bitmap bitmap;
     private Bitmap player;
-    private Bitmap explosion;
+    private Bitmap explosion1;
+    private Bitmap explosion2;
+    private Bitmap explosion3;
+    private Bitmap explosion4;
     private int deathtimer;
 
-    public player(float x, float y, Bitmap player,Bitmap explosion){
+    public player(float x, float y, Bitmap player,Bitmap explosion,Bitmap explosion2, Bitmap explosion3, Bitmap explosion4){
         this.x = x;
         this.y = y;
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -26,12 +30,34 @@ public class player {
         paint.setStyle(Paint.Style.FILL);
         this.player = player;
         matrix = new Matrix();
-        this.explosion = explosion;
+        this.explosion1 = explosion;
+        this.explosion2 = explosion2;
+        this.explosion3 = explosion3;
+        this.explosion4 = explosion4;
     }
 
     public void Draw(Canvas canvas){
-        if(VAR.isDead){
-            this.player = explosion;
+        if(VAR.isDead && !VAR.isDeadAnimation){
+            deathtimer++;
+            if(deathtimer<2){
+                this.bitmap = explosion1;
+            }
+            else if(deathtimer<4){
+                this.bitmap = explosion2;
+            }
+            else if(deathtimer<6){
+                this.bitmap = explosion3;
+            }
+            else if(deathtimer<8){
+                this.bitmap = explosion4;
+            }else if(deathtimer>=8){
+                VAR.isDeadAnimation = true;
+                deathtimer = 0;
+            }
+
+        }
+        if(!VAR.isDead){
+            this.bitmap = player;
         }
         matrix.reset();
         if(VAR.rotateGoal < 0){
@@ -64,7 +90,7 @@ public class player {
                 VAR.currentRotate+=rate;
         }
         if(VAR.pressX!=0) {
-            matrix.postTranslate(-player.getWidth() / 2, -player.getHeight() / 2);
+            matrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
             if(VAR.currentRotate>180){
                 VAR.currentRotate=VAR.currentRotate-360;
             }
@@ -75,7 +101,7 @@ public class player {
         else{
             matrix.postTranslate(x,y);
         }
-        canvas.drawBitmap(this.player, matrix, null);
+        canvas.drawBitmap(this.bitmap, matrix, null);
     }
 
     public float getX() {

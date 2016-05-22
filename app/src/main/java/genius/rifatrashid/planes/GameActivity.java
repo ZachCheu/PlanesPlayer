@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -26,10 +27,13 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private SurfaceView _surfaceView;
     private GameLoopThread thread;
     public int timer = 0;
+    public double timerscore = 0;
     private final Paint scorePaint = new Paint();
     private final Paint highScorePaint = new Paint();
     private final Paint continueGame = new Paint();
     public TextView t, a;
+    public MediaPlayer music;
+    public MediaPlayer boom;
 
 
     @Override
@@ -52,6 +56,9 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
         a = (TextView) findViewById(R.id.titleText2);
         t.setTypeface(loading_text_font);
         a.setTypeface(loading_text_font);
+        music = MediaPlayer.create(this,R.raw.main_music);
+        boom = MediaPlayer.create(this,R.raw.explosionsound);
+        music.setVolume(0.7f,0.7f);
         //loading_text_font = Typeface.createFromAsset(getAssets(), "fonts/loader_font.TTF");
 
         _surfaceView.setOnTouchListener(new View.OnTouchListener() {
@@ -63,6 +70,16 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
                         VAR.pressY = (int)event.getY();
                         VAR.rotateGoal = (int) (Math.toDegrees(Math.atan2(-VAR.screenHeight / 2 + VAR.pressY, -VAR.screenWidth/2 + VAR.pressX)));
                         VAR.pressDown = true;
+                        if(VAR.isDead){
+                            VAR.isDead = false;
+                            VAR.isDeadAnimation=false;
+                            timer = 0;
+                            VAR.currentScore = 0;
+                            timerscore = System.currentTimeMillis();
+                            VAR.m1Hit = false;
+                            VAR.m2Hit = false;
+                            VAR.m3Hit = false;
+                        }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         VAR.pressX = (int)event.getX();
@@ -148,9 +165,12 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
         public void doStart() {
             synchronized (_surfaceHolder) {
                 VAR.startTime = System.currentTimeMillis();
-                VAR.explosion = BitmapFactory.decodeResource(getResources(), R.drawable.explosion);
+                VAR.explosion1 = BitmapFactory.decodeResource(getResources(), R.drawable.explosion1);
+                VAR.explosion2 = BitmapFactory.decodeResource(getResources(), R.drawable.explosion2);
+                VAR.explosion3 = BitmapFactory.decodeResource(getResources(), R.drawable.explosion3);
+                VAR.explosion4 = BitmapFactory.decodeResource(getResources(), R.drawable.explosion4);
                 VAR.player = BitmapFactory.decodeResource(getResources(), R.drawable.player);
-                VAR.plane = new player(VAR.screenWidth / 2, VAR.screenHeight / 2,VAR.player,VAR.explosion);
+                VAR.plane = new player(VAR.screenWidth / 2, VAR.screenHeight / 2,VAR.player,VAR.explosion1,VAR.explosion2,VAR.explosion3,VAR.explosion4);
                 VAR.missile = BitmapFactory.decodeResource(getResources(), R.drawable.missile);
                 VAR.m1 = new missile(VAR.missile,VAR.screenWidth,450,4,true);
                 VAR.m2 = new missile(VAR.missile,-200,-200,6,false);
@@ -168,6 +188,9 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 continueGame.setColor(Color.GRAY);
                 continueGame.setTypeface(loading_text_font);
                 continueGame.setTextSize(50);
+                timerscore = System.currentTimeMillis();
+                music.start();
+                music.setLooping(true);
             }
         }
 
@@ -221,16 +244,29 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 canvas.save();
                 canvas.drawColor(Color.parseColor("#FFFFFF"));
                 backgroundBitmap.Draw(canvas);
-                VAR.plane.Draw(canvas);
-                VAR.m1.Draw(canvas);
-                VAR.m2.Draw(canvas);
-                VAR.m3.Draw(canvas);
+                if(!VAR.isDeadAnimation) {
+                    VAR.plane.Draw(canvas);
+                }
+                if(!VAR.m1Hit){
+                    VAR.m1.Draw(canvas);
+                }
+                if(!VAR.m2Hit) {
+                    VAR.m2.Draw(canvas);
+                }
+                if(!VAR.m3Hit){
+                    VAR.m3.Draw(canvas);
+                }
                 if(!VAR.isDead) {
+                    VAR.currentScore = (int)((System.currentTimeMillis()-timerscore)/1000);
                     canvas.drawText("Score: " + VAR.currentScore, VAR.screenWidth / 2 - 162, 2 * VAR.screenHeight / 3 + 250, scorePaint);
                 }
-                if(VAR.isDead){
-                    canvas.drawText("Highscore: " + VAR.globalHighScore, VAR.screenWidth / 2-380,VAR.screenHeight / 3-100,highScorePaint);
-                    canvas.drawText("Score: " + VAR.globalScore, VAR.screenWidth / 2-260,VAR.screenHeight / 3,highScorePaint);
+                if(VAR.isDeadAnimation){
+                    canvas.drawColor(Color.parseColor("#78000000"));
+                    if (VAR.currentScore > VAR.globalHighScore) {
+                        VAR.globalHighScore= VAR.currentScore;
+                    }
+                    canvas.drawText("Highscore: " + VAR.globalHighScore, VAR.screenWidth / 2 - 380, VAR.screenHeight / 3 - 100, highScorePaint);
+                    canvas.drawText("Score: " + VAR.currentScore, VAR.screenWidth / 2 - 260, VAR.screenHeight / 3, highScorePaint);
                     canvas.drawText("Tap to Continue",VAR.screenWidth / 2-200,2*VAR.screenHeight / 3+300,continueGame);
                 }
             }
@@ -262,13 +298,22 @@ public class GameActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 if(!VAR.isDead){
                     //System.out.println("test");
                     if(VAR.m1.hitDetect(VAR.plane)){
+                        boom.start();
                         VAR.isDead = true;
+                        VAR.m1Hit = true;
+                        VAR.m1.ogPos();
                     }
                     if(VAR.m2.hitDetect(VAR.plane)){
+                        boom.start();
                         VAR.isDead = true;
+                        VAR.m2Hit = true;
+                        VAR.m2.ogPos();
                     }
                     if(VAR.m3.hitDetect(VAR.plane)){
+                        boom.start();
                         VAR.isDead = true;
+                        VAR.m3Hit = true;
+                        VAR.m3.ogPos();
                     }
                 }
             }

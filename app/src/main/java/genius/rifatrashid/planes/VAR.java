@@ -8,7 +8,10 @@ import android.graphics.Bitmap;
 public class VAR {
     public static Bitmap player;
     public static Bitmap missile;
-    public static Bitmap explosion;
+    public static Bitmap explosion1;
+    public static Bitmap explosion2;
+    public static Bitmap explosion3;
+    public static Bitmap explosion4;
     public static player plane;
     public static missile m1;
     public static missile m2;
@@ -30,6 +33,10 @@ public class VAR {
     public static int currentScore;
     public static int globalScore;
     public static int globalHighScore;
+    public static boolean isDeadAnimation = false;
+    public static boolean m1Hit = false;
+    public static boolean m2Hit = false;
+    public static boolean m3Hit = false;
 
 
 }

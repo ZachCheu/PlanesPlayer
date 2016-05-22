@@ -11,6 +11,8 @@ import android.graphics.Point;
 public class missile {
     private Bitmap missileBit;
     private int x,y;
+    private int ogx;
+    private int ogy;
     private boolean shouldTurn = true;
     private double deltax,deltay;
     private int currentRotate;
@@ -26,6 +28,8 @@ public class missile {
     public Point botRight = new Point((VAR.screenWidth/2)+(playerhitlength/2),(VAR.screenHeight/2)+(playerhitlength/2));
 
     public missile(Bitmap missleBit,int x, int y, int rate,boolean run){
+        ogx = x;
+        ogy = y;
         this.x= x;
         this.y= y;
         this.missileBit = missleBit;
@@ -41,8 +45,8 @@ public class missile {
                 this.x -= 30 * Math.cos((double) VAR.currentRotate * (Math.PI / 180));
                 this.y -= 30 * Math.sin((double) VAR.currentRotate * (Math.PI / 180));
             }
-            deltax = 35 * Math.cos((double) currentRotate * (Math.PI / 180));
-            deltay = 35 * Math.sin((double) currentRotate * (Math.PI / 180));
+            deltax = 37 * Math.cos((double) currentRotate * (Math.PI / 180));
+            deltay = 37 * Math.sin((double) currentRotate * (Math.PI / 180));
             this.x += deltax;
             this.y += deltay;
             matrix.postTranslate(-missileBit.getWidth() / 2, -missileBit.getHeight() / 2);
@@ -103,6 +107,13 @@ public class missile {
     public boolean getRun(){
         return run;
     }
+    public void setX(int pos){
+        x = pos;
+    }
+    public void setY(int pos){
+        y = pos;
+    }
+
     public int getX(){
         return x;
     }
@@ -129,5 +140,9 @@ public class missile {
             }
         }*/
         return false;
+    }
+    public void ogPos(){
+        setX(ogx);
+        setY(ogy);
     }
 }
